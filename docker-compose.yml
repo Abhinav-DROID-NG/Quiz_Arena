@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: quizarena
+      POSTGRES_PASSWORD: quizarena
+      POSTGRES_DB: quizarena
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quizarena"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      ENV: development
+      DATABASE_URL: postgres://quizarena:quizarena@db:5432/quizarena?sslmode=disable
+      JWT_SECRET: change-me-in-production
+      JWT_EXPIRY: 168h
+      CORS_ORIGINS: http://localhost:3000
+      RATE_LIMIT_RPS: 100
+      RATE_LIMIT_BURST: 20
+      REQUEST_TIMEOUT: 30s
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
