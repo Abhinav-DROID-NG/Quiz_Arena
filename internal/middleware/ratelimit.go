@@ -79,15 +79,13 @@ func (rl *RateLimiter) Limit(next http.Handler) http.Handler {
 // realIP extracts the client IP from X-Forwarded-For or RemoteAddr.
 func realIP(r *http.Request) string {
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		// Take the first IP in the list.
-		if idx := len(xff); idx > 0 {
-			for i := 0; i < len(xff); i++ {
-				if xff[i] == ',' {
-					return xff[:i]
-				}
+		// Take the first IP in the comma-separated list.
+		for i := 0; i < len(xff); i++ {
+			if xff[i] == ',' {
+				return xff[:i]
 			}
-			return xff
 		}
+		return xff
 	}
 	// Strip port from RemoteAddr.
 	addr := r.RemoteAddr

@@ -9,7 +9,7 @@ A production-ready Go backend for the Quiz Arena competitive quiz platform.
 - **GATE-style Scoring** — Negative marking: +1 correct, -1 wrong, 0 skipped
 - **Multi-factor Leaderboard** — Composite ranking from score (60%), time efficiency (25%), accuracy (15%)
 - **Performance Analytics** — Score trends and Elo progression over time
-- **Rate Limiting** — Per-IP rate limiter (100 req/min default)
+- **Rate Limiting** — Per-IP rate limiter (100 req/s default)
 - **Graceful Shutdown** — Clean server shutdown on SIGTERM/SIGINT
 
 ## Tech Stack

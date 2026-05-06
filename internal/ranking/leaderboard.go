@@ -13,7 +13,7 @@ import (
 // This is called asynchronously after a session completes.
 func RefreshLeaderboard(ctx context.Context, pool *pgxpool.Pool, quizID string, timeLimitSeconds int) error {
 	rows, err := pool.Query(ctx, `
-		SELECT a.id, a.user_id, u.username, u.elo_rating,
+		SELECT a.user_id, u.username, u.elo_rating,
 		       a.score, a.time_elapsed_seconds,
 		       CASE WHEN (a.correct_answers + a.wrong_answers) > 0
 		            THEN a.correct_answers::float / (a.correct_answers + a.wrong_answers)
@@ -40,7 +40,7 @@ func RefreshLeaderboard(ctx context.Context, pool *pgxpool.Pool, quizID string, 
 	for rows.Next() {
 		e := &models.LeaderboardEntry{}
 		if err := rows.Scan(
-			&e.UserID, &e.UserID, &e.Username, &e.EloRating,
+			&e.UserID, &e.Username, &e.EloRating,
 			&e.Score, &e.TimeElapsed, &e.Accuracy, &e.AttemptedAt,
 		); err != nil {
 			return fmt.Errorf("scan row: %w", err)
