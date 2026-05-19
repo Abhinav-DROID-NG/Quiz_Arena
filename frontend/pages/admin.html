@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Quiz Arena</title>
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/admin.css">
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Quiz Arena</h2>
+        <p class="sidebar-subtitle">Admin Panel</p>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" data-section="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#quizzes" class="nav-item" data-section="quizzes">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">Quizzes</span>
+        </a>
+        <a href="#questions" class="nav-item" data-section="questions">
+          <span class="nav-icon">❓</span>
+          <span class="nav-label">Questions</span>
+        </a>
+        <a href="#users" class="nav-item" data-section="users">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="#analytics" class="nav-item" data-section="analytics">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <a href="#settings" class="nav-item" data-section="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost" onclick="logout()">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Header -->
+      <header class="admin-header">
+        <div class="header-content">
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Overview and management tools</p>
+        </div>
+        <div class="header-actions">
+          <input type="text" class="search-input" placeholder="Search...">
+          <button class="btn btn-primary btn-small">+ New</button>
+        </div>
+      </header>
+
+      <!-- Dashboard Section -->
+      <section id="dashboard-section" class="content-section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-content">
+              <p class="stat-label">Total Quizzes</p>
+              <p class="stat-value">127</p>
+              <p class="stat-change">+5 this month</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">❓</div>
+            <div class="stat-content">
+              <p class="stat-label">Total Questions</p>
+              <p class="stat-value">4,283</p>
+              <p class="stat-change">+142 this month</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">👤</div>
+            <div class="stat-content">
+              <p class="stat-label">Active Users</p>
+              <p class="stat-value">1,247</p>
+              <p class="stat-change">+89 this week</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+              <p class="stat-label">Attempts Today</p>
+              <p class="stat-value">342</p>
+              <p class="stat-change">↑ 15% vs yesterday</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="chart-card">
+            <h3>Attempts Over Time</h3>
+            <div class="chart-placeholder">
+              <svg width="100%" height="200" viewBox="0 0 300 200">
+                <line x1="30" y1="170" x2="280" y2="170" stroke="#333333" stroke-width="1"/>
+                <polyline points="30,120 60,100 90,130 120,80 150,90 180,60 210,70 240,50 270,65" fill="none" stroke="#C9A86C" stroke-width="2"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Top Performing Subjects</h3>
+            <div class="list-placeholder">
+              <div class="list-item">
+                <span class="list-label">Data Structures</span>
+                <span class="list-value">847 attempts</span>
+              </div>
+              <div class="list-item">
+                <span class="list-label">Quantitative</span>
+                <span class="list-value">723 attempts</span>
+              </div>
+              <div class="list-item">
+                <span class="list-label">Operating Systems</span>
+                <span class="list-value">614 attempts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quizzes Section -->
+      <section id="quizzes-section" class="content-section">
+        <div class="section-controls">
+          <button class="btn btn-primary btn-small" onclick="createQuiz()">+ Create Quiz</button>
+          <select class="filter-select">
+            <option>All Statuses</option>
+            <option>Published</option>
+            <option>Draft</option>
+            <option>Archived</option>
+          </select>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Quiz Name</th>
+              <th>Subject</th>
+              <th>Questions</th>
+              <th>Status</th>
+              <th>Attempts</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Arrays & Linked Lists</strong></td>
+              <td>Data Structures</td>
+              <td>15</td>
+              <td><span class="status published">Published</span></td>
+              <td>234</td>
+              <td>2026-03-15</td>
+              <td>
+                <button class="btn-icon" title="Edit">✏️</button>
+                <button class="btn-icon" title="View">👁️</button>
+                <button class="btn-icon" title="Delete">🗑️</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Process Management</strong></td>
+              <td>Operating Systems</td>
+              <td>12</td>
+              <td><span class="status draft">Draft</span></td>
+              <td>0</td>
+              <td>2026-03-14</td>
+              <td>
+                <button class="btn-icon" title="Edit">✏️</button>
+                <button class="btn-icon" title="View">👁️</button>
+                <button class="btn-icon" title="Delete">🗑️</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>SQL Queries</strong></td>
+              <td>Database Management</td>
+              <td>18</td>
+              <td><span class="status published">Published</span></td>
+              <td>189</td>
+              <td>2026-03-12</td>
+              <td>
+                <button class="btn-icon" title="Edit">✏️</button>
+                <button class="btn-icon" title="View">👁️</button>
+                <button class="btn-icon" title="Delete">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Questions Section -->
+      <section id="questions-section" class="content-section">
+        <div class="section-controls">
+          <button class="btn btn-primary btn-small" onclick="createQuestion()">+ Create Question</button>
+          <input type="text" class="filter-input" placeholder="Filter by keyword...">
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Quiz</th>
+              <th>Difficulty</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>What is the time complexity of binary search?</td>
+              <td>Arrays & Linked Lists</td>
+              <td><span class="difficulty easy">Easy</span></td>
+              <td>MCQ</td>
+              <td><span class="status published">Active</span></td>
+              <td>
+                <button class="btn-icon">✏️</button>
+                <button class="btn-icon">🗑️</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Explain deadlock detection algorithms</td>
+              <td>Operating Systems</td>
+              <td><span class="difficulty hard">Hard</span></td>
+              <td>Short Answer</td>
+              <td><span class="status published">Active</span></td>
+              <td>
+                <button class="btn-icon">✏️</button>
+                <button class="btn-icon">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Users Section -->
+      <section id="users-section" class="content-section">
+        <div class="section-controls">
+          <select class="filter-select">
+            <option>All Users</option>
+            <option>Admins</option>
+            <option>Active (30 days)</option>
+            <option>Inactive</option>
+          </select>
+          <input type="text" class="filter-input" placeholder="Search by email...">
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Elo Rating</th>
+              <th>Quizzes Completed</th>
+              <th>Role</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Aditya Verma</strong></td>
+              <td>aditya@example.com</td>
+              <td>3142</td>
+              <td>248</td>
+              <td><span class="role user">User</span></td>
+              <td>2025-11-03</td>
+              <td>
+                <button class="btn-icon">👁️</button>
+                <button class="btn-icon">🚫</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Priya Singh</strong></td>
+              <td>priya@example.com</td>
+              <td>2847</td>
+              <td>156</td>
+              <td><span class="role user">User</span></td>
+              <td>2025-12-15</td>
+              <td>
+                <button class="btn-icon">👁️</button>
+                <button class="btn-icon">🚫</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Analytics Section -->
+      <section id="analytics-section" class="content-section">
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h3>Subject Popularity</h3>
+            <div class="mini-chart">
+              <div class="bar-item">
+                <span class="bar-label">Data Structures</span>
+                <div class="bar-container">
+                  <div class="bar-fill" style="width: 92%"></div>
+                </div>
+                <span class="bar-value">847</span>
+              </div>
+              <div class="bar-item">
+                <span class="bar-label">Quantitative</span>
+                <div class="bar-container">
+                  <div class="bar-fill" style="width: 85%"></div>
+                </div>
+                <span class="bar-value">723</span>
+              </div>
+              <div class="bar-item">
+                <span class="bar-label">Operating Systems</span>
+                <div class="bar-container">
+                  <div class="bar-fill" style="width: 72%"></div>
+                </div>
+                <span class="bar-value">614</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <h3>User Growth</h3>
+            <div class="mini-stats">
+              <div class="stat">
+                <span class="stat-num">+156</span>
+                <span class="stat-txt">This Week</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num">+847</span>
+                <span class="stat-txt">This Month</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num">+3,247</span>
+                <span class="stat-txt">This Year</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Section -->
+      <section id="settings-section" class="content-section">
+        <div class="settings-group">
+          <h3>Application Settings</h3>
+          
+          <div class="setting-item">
+            <label>Platform Name</label>
+            <input type="text" value="Quiz Arena" class="setting-input">
+          </div>
+
+          <div class="setting-item">
+            <label>Default Elo Rating</label>
+            <input type="number" value="1600" class="setting-input">
+          </div>
+
+          <div class="setting-item">
+            <label>Enable User Registration</label>
+            <input type="checkbox" checked class="setting-checkbox">
+          </div>
+
+          <div class="setting-item">
+            <label>Max Concurrent Users</label>
+            <input type="number" value="1000" class="setting-input">
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>Email Settings</h3>
+          
+          <div class="setting-item">
+            <label>SMTP Server</label>
+            <input type="text" value="smtp.gmail.com" class="setting-input">
+          </div>
+
+          <div class="setting-item">
+            <label>SMTP Port</label>
+            <input type="number" value="587" class="setting-input">
+          </div>
+        </div>
+
+        <div class="settings-actions">
+          <button class="btn btn-primary">Save Changes</button>
+          <button class="btn btn-secondary">Reset to Defaults</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../scripts/admin.ts"></script>
+</body>
+</html>
