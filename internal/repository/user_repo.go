@@ -22,12 +22,12 @@ func NewUserRepo(pool *pgxpool.Pool) *UserRepo {
 // Create inserts a new user and returns the created record.
 func (r *UserRepo) Create(ctx context.Context, u *models.User) (*models.User, error) {
 	err := r.pool.QueryRow(ctx, `
-		INSERT INTO users (id, username, email, password_hash, elo_rating, is_admin)
-		VALUES ($1, $2, $3, $4, $5, $6)
-		RETURNING id, username, email, password_hash, elo_rating, is_admin, created_at, updated_at
-	`, u.ID, u.Username, u.Email, u.PasswordHash, u.EloRating, u.IsAdmin,
+		INSERT INTO users (id, username, email, password_hash, google_id, provider, avatar_url, elo_rating, is_admin)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		RETURNING id, username, email, password_hash, google_id, provider, avatar_url, elo_rating, is_admin, created_at, updated_at
+	`, u.ID, u.Username, u.Email, u.PasswordHash, u.GoogleID, u.Provider, u.AvatarURL, u.EloRating, u.IsAdmin,
 	).Scan(
-		&u.ID, &u.Username, &u.Email, &u.PasswordHash,
+		&u.ID, &u.Username, &u.Email, &u.PasswordHash, &u.GoogleID, &u.Provider, &u.AvatarURL,
 		&u.EloRating, &u.IsAdmin, &u.CreatedAt, &u.UpdatedAt,
 	)
 	if err != nil {
@@ -40,10 +40,10 @@ func (r *UserRepo) Create(ctx context.Context, u *models.User) (*models.User, er
 func (r *UserRepo) GetByEmail(ctx context.Context, email string) (*models.User, error) {
 	u := &models.User{}
 	err := r.pool.QueryRow(ctx, `
-		SELECT id, username, email, password_hash, elo_rating, is_admin, created_at, updated_at
+		SELECT id, username, email, password_hash, google_id, provider, avatar_url, elo_rating, is_admin, created_at, updated_at
 		FROM users WHERE email = $1
 	`, email).Scan(
-		&u.ID, &u.Username, &u.Email, &u.PasswordHash,
+		&u.ID, &u.Username, &u.Email, &u.PasswordHash, &u.GoogleID, &u.Provider, &u.AvatarURL,
 		&u.EloRating, &u.IsAdmin, &u.CreatedAt, &u.UpdatedAt,
 	)
 	if err != nil {
@@ -56,16 +56,44 @@ func (r *UserRepo) GetByEmail(ctx context.Context, email string) (*models.User, 
 func (r *UserRepo) GetByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	u := &models.User{}
 	err := r.pool.QueryRow(ctx, `
-		SELECT id, username, email, password_hash, elo_rating, is_admin, created_at, updated_at
+		SELECT id, username, email, password_hash, google_id, provider, avatar_url, elo_rating, is_admin, created_at, updated_at
 		FROM users WHERE id = $1
 	`, id).Scan(
-		&u.ID, &u.Username, &u.Email, &u.PasswordHash,
+		&u.ID, &u.Username, &u.Email, &u.PasswordHash, &u.GoogleID, &u.Provider, &u.AvatarURL,
 		&u.EloRating, &u.IsAdmin, &u.CreatedAt, &u.UpdatedAt,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("get user by id: %w", err)
 	}
 	return u, nil
+}
+
+// GetByGoogleID looks up a user by their Google OAuth ID.
+func (r *UserRepo) GetByGoogleID(ctx context.Context, googleID string) (*models.User, error) {
+	u := &models.User{}
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, username, email, password_hash, google_id, provider, avatar_url, elo_rating, is_admin, created_at, updated_at
+		FROM users WHERE google_id = $1
+	`, googleID).Scan(
+		&u.ID, &u.Username, &u.Email, &u.PasswordHash, &u.GoogleID, &u.Provider, &u.AvatarURL,
+		&u.EloRating, &u.IsAdmin, &u.CreatedAt, &u.UpdatedAt,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("get user by google id: %w", err)
+	}
+	return u, nil
+}
+
+// UpdateGoogleID links a Google ID to an existing user account.
+func (r *UserRepo) UpdateGoogleID(ctx context.Context, id uuid.UUID, googleID, avatarURL string) error {
+	_, err := r.pool.Exec(ctx,
+		"UPDATE users SET google_id = $1, avatar_url = $2, provider = $3, updated_at = NOW() WHERE id = $4",
+		googleID, avatarURL, models.AuthProviderGoogle, id,
+	)
+	if err != nil {
+		return fmt.Errorf("update google id: %w", err)
+	}
+	return nil
 }
 
 // UpdateElo updates the elo_rating for a user.

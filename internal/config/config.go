@@ -12,13 +12,15 @@ import (
 
 // Config holds all application configuration loaded from environment variables.
 type Config struct {
-	Port    string
-	Env     string
-	DB      DBConfig
-	JWT     JWTConfig
-	CORS    CORSConfig
+	Port      string
+	Env       string
+	DB        DBConfig
+	JWT       JWTConfig
+	CORS      CORSConfig
 	RateLimit RateLimitConfig
-	Timeout time.Duration
+	Timeout   time.Duration
+	Google    GoogleConfig
+	Storage   StorageConfig
 }
 
 // DBConfig holds PostgreSQL connection settings.
@@ -44,6 +46,20 @@ type CORSConfig struct {
 type RateLimitConfig struct {
 	RequestsPerSecond float64
 	Burst             int
+}
+
+// GoogleConfig holds Google OAuth credentials.
+type GoogleConfig struct {
+	ClientID     string
+	ClientSecret string
+	RedirectURL  string
+}
+
+// StorageConfig holds file storage settings.
+type StorageConfig struct {
+	Driver  string // "local" or "s3"
+	BaseDir string // local filesystem base directory
+	BaseURL string // public URL prefix for local storage
 }
 
 // Load reads configuration from environment variables, optionally loading a .env file first.
@@ -116,6 +132,16 @@ func Load() (*Config, error) {
 			Burst:             rateBurst,
 		},
 		Timeout: timeout,
+		Google: GoogleConfig{
+			ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+			RedirectURL:  getEnv("GOOGLE_REDIRECT_URL", "http://localhost:8080/auth/google/callback"),
+		},
+		Storage: StorageConfig{
+			Driver:  getEnv("STORAGE_DRIVER", "local"),
+			BaseDir: getEnv("STORAGE_BASE_DIR", "assets"),
+			BaseURL: getEnv("STORAGE_BASE_URL", "http://localhost:8080/assets"),
+		},
 	}, nil
 }
 
